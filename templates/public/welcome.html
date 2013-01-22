@@ -1,0 +1,49 @@
+{% extends "../main.html" %}
+
+{% block title %}Welcome{% end %}
+
+{% block content %}
+
+        <div class="well" style="background-image: url(/static/images/shodan.jpg); background-size:contain; background-size:100%;">
+                <p>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </p>
+        </div>
+
+        <center><p>Welcome to Shodan Hacking Database</p></center>
+        <center><span><a href="/top" >[Top Dorks]</a></span> | <span><a href="/submit">[Submit a Dork]</a></span></center>
+        <br />
+        <center>
+            <span>Category: </span>
+            <select>
+                <option>SMNP</option>
+            </select>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>Search:</span>
+            <span><input><input type="submit"></span>
+        </center>
+
+        <hr>
+        <h2>Latest Entries:</h2>
+        <table class="table table-striped">
+            <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Categories</th>
+            </tr>
+            <tr>
+                <td>row 1, cell 1</td>
+                <td>row 1, cell 2</td>
+                <td>things</td>
+            </tr>
+            <tr>
+                <td>row 2, cell 1</td>
+                <td>row 2, cell 2</td>
+                <td>things</td>
+            </tr>
+        </table>
+
+{% end %}
