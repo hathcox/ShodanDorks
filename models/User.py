@@ -53,6 +53,7 @@ class User(BaseObject):
         lambda self, password: setattr(self, '_password',
                                        self.__class__._hash_password(password, self.salt))
     ))
+    submitted_dorks = relationship("Dork", backref="user")
 
     @classmethod
     def by_id(cls, user_id):

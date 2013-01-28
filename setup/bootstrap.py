@@ -24,7 +24,7 @@ import getpass
 
 from libs.ConsoleColors import *
 from libs.ConfigManager import ConfigManager
-from models import dbsession, User, Permission, Algorithm
+from models import dbsession, User, Permission
 
 
 # Fills the database with some startup data.
@@ -47,27 +47,6 @@ else:
         print(WARN +
               'Error: Passwords did not match, or were less than 12 chars')
         os._exit(1)
-
-### Initialize algorithms
-md5 = Algorithm(
-    algorithm_name=u'MD5',
-    length=32,
-    chars=u'1234567890ABCDEF',
-)
-lm = Algorithm(
-    algorithm_name=u'LM',
-    length=16,
-    chars=u'1234567890ABCDEF',
-)
-ntlm = Algorithm(
-    algorithm_name=u'NTLM',
-    length=16,
-    chars=u'1234567890ABCDEF',
-)
-dbsession.add(md5)
-dbsession.add(lm)
-dbsession.add(ntlm)
-dbsession.flush()
 
 ### Create admin account
 user = User(

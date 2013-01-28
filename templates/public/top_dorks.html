@@ -1,0 +1,28 @@
+{% extends "../main.html" %}
+
+{% block title %}Top Dorks{% end %}
+
+{% block content %}
+	<h2>Top Dorks</h2>
+	<p>Bellow are the most used Dorks on this site</p>
+
+	<table class="table table-striped">
+        <tr>
+            <th>Date</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Link</th>
+        </tr>
+        {% if dorks != None and len(dorks) != 0 %}
+            {% for dork in dorks %}
+            <tr>
+                <td>{{ dork.submited_date }}</td>
+                <td>{{ dork.title }}</td>
+                <td>{{ dork.description }}</td>
+                <td><a href="#"><i class="icon-screenshot icon-white" ></i></a></td>
+            </tr>
+
+            {% end %}
+        {% end %}
+    </table>
+{% end %}

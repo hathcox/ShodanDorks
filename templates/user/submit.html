@@ -1,0 +1,78 @@
+{% extends "../main.html" %}
+
+{% block title %}Submit a Dork{% end %}
+
+{% block content %}
+	<h1>Please Submit a New Dork</h1>
+	<br />
+	
+	{% if errors != None and len(errors) != 0 %}
+      {% for error in errors %}
+        <div class="alert alert-error">
+          <a class="close" data-dismiss="alert" href="#">×</a>
+          <h4 class="alert-heading">ERROR</h4>
+          {{ error }}
+        </div>
+      {% end %}
+    {% end %}
+
+    {% if success != None and len(success) != 0 %}
+    	<div class="alert alert-success">
+          <a class="close" data-dismiss="alert" href="#">×</a>
+          <h4 class="alert-heading">Success</h4>
+          {{ success }}
+        </div>
+
+    {% end %}
+
+	<form class="form-horizontal" action="/submit" method="POST">
+
+		{% raw xsrf_form_html() %}
+
+	  <div class="control-group">
+	    <label class="control-label" for="title">Title</label>
+	    <div class="controls">
+	      <input type="text" name="title" placeholder="Please enter a Title">
+	    </div>
+	  </div>
+
+<!--
+	  <div class="control-group">
+	    <label class="control-label" for="link">Link</label>
+	    <div class="controls">
+	      <input type="text" id="link" placeholder="Provide a Link">
+	    </div>
+	  </div>
+-->
+	  <div class="control-group">
+	  	<label class="control-label" for="description">Description</label>
+	    <div class="controls">
+	      <textarea name="description" placeholder="Please Enter a Description">
+	      </textarea>
+	    </div>
+	  </div>
+
+	  <div class="control-group">
+	  	<label class="control-label" for="category">Category</label>
+	    <div class="controls">
+	      <select name="category">
+	      	<option>SNMP</option>
+	      </select>
+	    </div>
+	  </div>
+
+	  <div class="control-group">
+	  	<label class="control-label" for="author">Author</label>
+	    <div class="controls">
+	      <input type="text" id="author" placeholder="Please enter an Author">
+	    </div>
+	  </div>
+
+	  <div class="control-group">
+	    <div class="controls">
+	      <button type="submit" class="btn">Submit Dork</button>
+	    </div>
+	  </div>
+	</form>
+
+{% end %}

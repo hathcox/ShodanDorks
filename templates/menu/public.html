@@ -17,6 +17,13 @@
             	<a href="/register">Register</a>
         </li>
 
+        {% if uri == "/top" %}
+            <li class="active">
+        {% else %}
+            <li>
+        {% end %}
+                <a href="/top">Top Dorks</a>
+        </li>
 
         {% if uri == "/about" %}
         	<li class="active">

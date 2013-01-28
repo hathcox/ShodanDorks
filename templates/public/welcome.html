@@ -16,14 +16,27 @@
         <center><p>Welcome to Shodan Hacking Database</p></center>
         <center><span><a href="/top" >[Top Dorks]</a></span> | <span><a href="/submit">[Submit a Dork]</a></span></center>
         <br />
+        {% if errors != None and len(errors) != 0 %}
+         {% for error in errors %}
+            <div class="alert alert-error">
+              <a class="close" data-dismiss="alert" href="#">×</a>
+              <h4 class="alert-heading">ERROR</h4>
+              {{ error }}
+            </div>
+          {% end %}
+        {% end %}
+
         <center>
-            <span>Category: </span>
-            <select>
-                <option>SMNP</option>
-            </select>
-            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>Search:</span>
-            <span><input><input type="submit"></span>
+            <form action="/" method="POST">
+                {% raw xsrf_form_html() %}
+                <span>Category: </span>
+                <select>
+                    <option>All</option>
+                </select>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>Search:</span>
+                <span><input name="search" ><input type="submit"></span>
+            </form>
         </center>
 
         <hr>
@@ -32,18 +45,20 @@
             <tr>
                 <th>Date</th>
                 <th>Title</th>
-                <th>Categories</th>
+                <th>Description</th>
+                <th>Link</th>
             </tr>
-            <tr>
-                <td>row 1, cell 1</td>
-                <td>row 1, cell 2</td>
-                <td>things</td>
-            </tr>
-            <tr>
-                <td>row 2, cell 1</td>
-                <td>row 2, cell 2</td>
-                <td>things</td>
-            </tr>
+            {% if dorks != None and len(dorks) != 0 %}
+                {% for dork in dorks %}
+                <tr>
+                    <td>{{ dork.submited_date }}</td>
+                    <td>{{ dork.title }}</td>
+                    <td>{{ dork.description }}</td>
+                    <td><a href="#"><i class="icon-screenshot icon-white" ></i></a></td>
+                </tr>
+
+                {% end %}
+            {% end %}
         </table>
 
 {% end %}

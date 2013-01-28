@@ -23,7 +23,7 @@ Created on Mar 13, 2012
 import thread
 import logging
 
-from models import dbsession, User, WeaponSystem
+from models import dbsession, User, Permission
 from handlers.BaseHandlers import AdminBaseHandler
 from libs.Form import Form
 from libs.SecurityDecorators import *
@@ -38,9 +38,7 @@ class ManageUsersHandler(AdminBaseHandler):
     def get(self, *args, **kwargs):
         ''' Renders the manage users page '''
         self.render("admin/manage_users.html",
-                    unapproved_users=User.get_unapproved(),
-                    approved_users=User.get_approved(),
-                    )
+                    users=User.all_users())
 
     @authenticated
     @authorized('admin')
@@ -52,7 +50,11 @@ class ManageUsersHandler(AdminBaseHandler):
         except:
             self.render("admin/error.html", errors=["User does not exist"])
         user = User.by_user_name(user_name)
-        user.approved = True
+        permission = Permission(
+            permission_name='admin',
+            user_id=user.id
+        )
+        self.dbsession.add(permission)
         self.dbsession.add(user)
         self.dbsession.flush()
         self.render("admin/approved_user.html", user=user)

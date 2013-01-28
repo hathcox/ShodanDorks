@@ -7,18 +7,6 @@
 {% block title %}Settings{% end %}
 
 {% block content %}
-	<!-- Wrapping the Recaptcha create method in a javascript function -->
-	<script type="text/javascript">
-		function showRecaptcha(element) {
-	    	Recaptcha.create("6LcJJ88SAAAAAFzcmQqDPWGKRQXmJ0DCiZoPWTZf", element, {
-	    	theme: "blackglass",
-	    	callback: null
-	   		});
-		}
-		$(document).ready(function() {
-			showRecaptcha('recaptcha_div'); 
-		});
-	</script>
 
 	<h1>User Settings</h1>
   <div class="well">
@@ -41,13 +29,7 @@
         <p>
           <label for="new_password2">Confirm Password</label>
           <input placeholder="Confirm Password" type="password" name="new_password2" id="new_password2" size="7" />
-        </p>
-        <p>
-          <label for="recaptch_div">
-            What is love?
-          </label>
-          <div id="recaptcha_div"></div>
-        </p>      
+        </p>    
       </fieldset>
       <p class="submit">
         <button class="btn btn-primary btn-large" type="submit"> Change Password </button>

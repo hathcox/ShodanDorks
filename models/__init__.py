@@ -36,12 +36,19 @@ db_connection = 'mysql://%s:%s@%s/%s' % (
 engine = create_engine(db_connection)
 Session = sessionmaker(bind=engine, autocommit=True)
 
+#Many to Many tables
+dork_tag_table = Table('dork_tag', BaseObject.metadata,
+    Column('dork_id', Integer, ForeignKey('dork.id')),
+    Column('tag_id', Integer, ForeignKey('tag.id')))
+
 # Import the dbsession instance to execute queries
 dbsession = Session(autoflush=True)
 
 # Import models (or the tables won't get created)
 from models.Permission import Permission
 from models.User import User
+from models.Dork import Dork
+from models.Tag import Tag
 
 # Calling this will create the tables at the database
 create_tables = lambda: (

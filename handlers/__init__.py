@@ -39,6 +39,7 @@ from tornado.ioloop import IOLoop, PeriodicCallback
 from handlers.PublicHandlers import *
 from handlers.ErrorHandlers import *
 from handlers.UserHandlers import *
+from handlers.AdminHandlers import *
 
 ### Load configuration
 config = ConfigMan.Instance()
@@ -56,8 +57,13 @@ app = Application([
                   (r'/static/(.*)',
                       StaticFileHandler, {'path': 'static'}),
 
+                  # Admin Handlers - for admin only pages
+                  (r'/manageusers', ManageUsersHandler, {
+                      'dbsession':dbsession}),
+
                   # User handlers - for logged in pages
-                  (r'/submit', SubmitHandler, {'dbsession': dbsession}),
+                  (r'/settings', SettingsHandler, {'dbsession' : dbsession}),
+                  (r'/logout', LogoutHandler),
 
                   # Public handlers - Serves all public pages
                   (r'/', WelcomeHandler),
@@ -65,6 +71,8 @@ app = Application([
                   (r'/register',
                       RegistrationHandler, {'dbsession': dbsession}),
                   (r'/about', AboutHandler),
+                  (r'/submit', SubmitHandler),
+                  (r'/top', TopHandler),
 
                   # Error handlers - Serves error pages
                   (r'/403', UnauthorizedHandler),
