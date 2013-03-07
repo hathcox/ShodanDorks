@@ -37,9 +37,19 @@ class Tag(BaseObject):
     ))
 
     @classmethod
+    def all(cls):
+        '''Returns all of the Tag objects '''
+        return dbsession.query(cls).all() 
+
+    @classmethod
     def by_id(cls, uid):
         ''' Return the user object whose user id is uid '''
         return dbsession.query(cls).filter_by(id=unicode(uid)).first()
+
+    @classmethod
+    def by_uuid(cls, uuid):
+        ''' Return the object whose user id is uid '''
+        return dbsession.query(cls).filter_by(uuid=unicode(uuid)).first()
 
     @classmethod
     def by_name(cls, name):

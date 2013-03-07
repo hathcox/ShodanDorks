@@ -36,6 +36,18 @@ class Dork(BaseObject):
         lambda self, title: setattr(
             self, '_title', self.__class__.filter_string(title, " _-"))
     ))
+    _query = Column(Unicode(64), unique=True, nullable=False)
+    query = synonym('_query', descriptor=property(
+        lambda self: self._query,
+        lambda self, query: setattr(
+            self, '_query', self.__class__.filter_string(query, " _-"))
+    ))
+    _author = Column(Unicode(64), unique=False, nullable=False)
+    author = synonym('_author', descriptor=property(
+        lambda self: self._author,
+        lambda self, author: setattr(
+            self, '_author', self.__class__.filter_string(author, " _-"))
+    ))
     description = Column(Unicode(1024), nullable=False)
     submited_date = Column(DateTime, default=datetime.now)
     tags = relationship("Tag", secondary=dork_tag_table)
@@ -45,6 +57,16 @@ class Dork(BaseObject):
     def by_id(cls, uid):
         ''' Return the object whose user id is uid '''
         return dbsession.query(cls).filter_by(id=unicode(uid)).first()
+
+    @classmethod
+    def by_uuid(cls, uuid):
+        ''' Return the object whose user id is uid '''
+        return dbsession.query(cls).filter_by(uuid=unicode(uuid)).first()
+
+    @classmethod
+    def all(cls):
+        '''Returns all of the Dork objects '''
+        return dbsession.query(cls).all() 
 
     @classmethod
     def by_title(cls, title):

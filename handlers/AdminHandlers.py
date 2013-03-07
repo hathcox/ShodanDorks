@@ -23,7 +23,7 @@ Created on Mar 13, 2012
 import thread
 import logging
 
-from models import dbsession, User, Permission
+from models import dbsession, User, Permission, Dork, Tag
 from handlers.BaseHandlers import AdminBaseHandler
 from libs.Form import Form
 from libs.SecurityDecorators import *
@@ -60,113 +60,106 @@ class ManageUsersHandler(AdminBaseHandler):
         self.render("admin/approved_user.html", user=user)
 
 
-class ManageJobsHandler(AdminBaseHandler):
+class ManageDorksHandler(AdminBaseHandler):
 
     @authenticated
     @authorized('admin')
     @restrict_ip_address
     def get(self, *args, **kwargs):
-        pass
-
-    @authenticated
-    @authorized('admin')
-    @restrict_ip_address
-    def post(self, *args, **kwargs):
-        pass
+        ''' Display all of the dorks in the system '''
+        dorks = Dork.all()
+        self.render("admin/manage_dorks.html", dorks=dorks)
 
 
-class AddWeaponSystemsHandler(AdminBaseHandler):
+class ManageTagsHandler(AdminBaseHandler):
 
     @authenticated
     @authorized('admin')
     @restrict_ip_address
     def get(self, *args, **kwargs):
-        ''' Renders the create weapon system page '''
-        self.render(
-            "admin/create_weaponsystem.html", errors=None)
+        ''' Display all of the tags in the system '''
+        tags = Tag.all()
+        self.render("admin/manage_tags.html", tags=tags)
 
     @authenticated
     @authorized('admin')
     @restrict_ip_address
     def post(self, *args, **kwargs):
-        ''' Creates a new weapon system, and yes the form validation is shit '''
-        form = Form(
-            name="Please enter a name",
-            ssh_user="Please enter an ssh user name",
-            ssh_key="Please enter an ssh key",
-            ip_address="Please enter a ip address",
-            ssh_port="Please enter an ssh port",
-            service_port="Please enter a service port",
-        )
+        ''' This is used to create new tags '''
+        form = Form(name="Please enter a tag name")
+        tags = Tag.all()
         if form.validate(self.request.arguments):
-            if WeaponSystem.by_name(self.get_argument('name')) != None:
-                self.render("admin/create_weaponsystem.html",
-                            errors=['That name already exists'])
-            elif WeaponSystem.by_ip_address(self.get_argument('ip_address')) != None:
-                self.render("admin/create_weaponsystem.html",
-                            errors=['IP Address already in use'])
-            else:
-                try:
-                    if not 1 <= int(self.get_argument('ssh_port')) < 65535:
-                        raise ValueError
-                    if not 1 <= int(self.get_argument('service_port')) < 65535:
-                        raise ValueError
-                    weapon_system = self.create_weapon()
-                    weapon_system.initialize()
-                    self.render("admin/created_weaponsystem.html", errors=None)
-                except ValueError:
-                    self.render("admin/create_weaponsystem.html",
-                                errors=["Invalid port number must be 1-65535"])
+            self.create_tag()
+            tags = Tag.all()
+            self.render("admin/manage_tags.html", tags=tags)
         else:
-            self.render("admin/create_weaponsystem.html", errors=form.errors)
+            self.render("admin/manage_tags.html", tags=tags, errors=form.errors)
 
-    def create_weapon(self):
-        ''' Adds parameters to the database '''
-        weapon_system = WeaponSystem(
-            weapon_system_name=unicode(self.get_argument('name')),
-            ssh_user=unicode(self.get_argument('ssh_user')),
-            ssh_key=unicode(self.get_argument('ssh_key')),
-            ip_address=unicode(self.get_argument('ip_address')),
-            ssh_port=int(self.get_argument('ssh_port')),
-            service_port=int(self.get_argument('service_port')),
-        )
-        dbsession.add(weapon_system)
-        dbsession.flush()
-        return weapon_system
+    def create_tag(self):
+        tag = Tag(
+            name = self.get_argument('name')
+            )
+        self.dbsession.add(tag)
+        self.dbsession.flush()
 
-
-class InitializeHandler(AdminBaseHandler):
+class EditDorksHandler(AdminBaseHandler):
 
     @authenticated
     @authorized('admin')
     @restrict_ip_address
     def get(self, *args, **kwargs):
-        try:
-            weapon_system = WeaponSystem.by_uuid(self.get_argument('uuid'))
-            success = weapon_system.initialize()
-        except:
-            logging.exception("Error while initializing weapon system.")
-            self.render("admin/initialize_failure.html")
-            return
-        if success:
-            self.render("admin/initialize_success.html")
-        else:
-            self.render("admin/initialize_failure.html")
-
-
-class EditWeaponSystemsHandler(AdminBaseHandler):
-
-    @authenticated
-    @authorized('admin')
-    @restrict_ip_address
-    def get(self, *args, **kwargs):
-        ''' Renders the create weapon system page '''
-        self.render("admin/edit_weaponsystem.html",
-                    uninit_systems=WeaponSystem.get_uninitialized(),
-                    weapon_systems=WeaponSystem.get_all())
+        ''' this will let you edit any given dork in the system '''
+        pass
 
     @authenticated
     @authorized('admin')
     @restrict_ip_address
     def post(self, *args, **kwargs):
         pass
+
+class DeleteDorksHandler(AdminBaseHandler):
+
+    @authenticated
+    @authorized('admin')
+    @restrict_ip_address
+    def get(self, *args, **kwargs):
+        ''' This will let you delete a given dork from the system '''
+        dorks = Dork.all()
+        try:
+            uuid = self.get_argument('dork')
+            if uuid != None:
+                dork = Dork.by_uuid(uuid)
+                if dork != None:
+                    self.dbsession.delete(dork)
+                    dorks = Dork.all()
+                    self.render("admin/manage_dorks.html", success="Successfuly deleted dork from the system", dorks=dorks)
+                else:
+                    self.render("admin/manage_dorks.html", errors="Please Select a Dork", dorks=dorks)
+            else:
+                self.render("admin/manage_dorks.html", errors="Please Select a Dork", dorks=dorks)
+        except:
+            self.render("admin/manage_dorks.html", errors="Invalid Dork Selected", dorks=dorks)
+       
+class DeleteTagsHandler(AdminBaseHandler):
+
+    @authenticated
+    @authorized('admin')
+    @restrict_ip_address
+    def get(self, *args, **kwargs):
+        ''' This will let you delete a given tag from the system '''
+        tags = Tag.all()
+        try:
+            uuid = self.get_argument('tag')
+            if uuid != None:
+                tag = Tag.by_uuid(uuid)
+                if tag != None:
+                    self.dbsession.delete(tag)
+                    tags = Tag.all()
+                    self.render("admin/manage_tags.html", success="Successfuly deleted tag from the system", tags=tags)
+                else:
+                    self.render("admin/manage_tags.html", errors="Please Select a Tag", tags=tags)
+            else:
+                self.render("admin/manage_tags.html", errors="Please Select a Tag", tags=tags)
+        except Exception as e:
+            self.render("admin/manage_tags.html", errors="Invalid Tag Selected", tags=tags)
+       

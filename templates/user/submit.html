@@ -36,14 +36,14 @@
 	    </div>
 	  </div>
 
-<!--
+
 	  <div class="control-group">
-	    <label class="control-label" for="link">Link</label>
+	    <label class="control-label" for="query">Query</label>
 	    <div class="controls">
-	      <input type="text" id="link" placeholder="Provide a Link">
+	      <input type="text" name="query" placeholder="Please Enter the Search Query">
 	    </div>
 	  </div>
--->
+
 	  <div class="control-group">
 	  	<label class="control-label" for="description">Description</label>
 	    <div class="controls">
@@ -53,10 +53,16 @@
 	  </div>
 
 	  <div class="control-group">
-	  	<label class="control-label" for="category">Category</label>
+	  	<label class="control-label" for="tag">Category</label>
 	    <div class="controls">
-	      <select name="category">
-	      	<option>SNMP</option>
+	      <select name="tag">
+	      	{% if len(tags) > 0 %}
+		      	{% for tag in tags %}
+	                        <option>{{ tag.name }}</option>
+	            {% end %}
+	        {% else %}
+	        	<option>NONE<option>
+            {% end %}
 	      </select>
 	    </div>
 	  </div>
@@ -64,7 +70,7 @@
 	  <div class="control-group">
 	  	<label class="control-label" for="author">Author</label>
 	    <div class="controls">
-	      <input type="text" id="author" placeholder="Please enter an Author">
+	      <input type="text" name="author" placeholder="Please enter an Author" value="{{ user.user_name }}">
 	    </div>
 	  </div>
 

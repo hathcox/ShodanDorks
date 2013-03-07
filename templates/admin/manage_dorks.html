@@ -1,0 +1,64 @@
+{% extends "../main.html" %}
+
+{% block title %}Manage Dorks{% end %}
+
+{% block content %}
+	<h2>Manage Dorks</h2>
+	<p>This page is used to delete and edit existing dorks</p>
+
+    {% try %}
+        {% if errors != None and len(errors) != 0 %}
+            <div class="alert alert-error">
+              <a class="close" data-dismiss="alert" href="#">×</a>
+              <h4 class="alert-heading">ERROR</h4>
+              {{ errors }}
+            </div>
+        {% end %}
+    {% except %}
+    {% end %}
+
+
+    {% try %}
+        {% if success != None and len(success) != 0 %}
+            <div class="alert alert-success">
+              <a class="close" data-dismiss="alert" href="#">×</a>
+              <h4 class="alert-heading">SUCCESS</h4>
+              {{ success }}
+            </div>
+        {% end %}
+    {% except %}
+    {% end %}
+
+
+	<table class="table table-striped">
+        <tr>
+            <th>Date</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        {% try %}
+            {% if dorks != None and len(dorks) != 0 %}
+                {% for dork in dorks %}
+                <tr>
+                    <td>{{ dork.submited_date }}</td>
+                    <td>{{ dork.title }}</td>
+                    <td>{{ dork.description }}</td>
+                    <td>
+                        <a href="/editdork?dork={{ dork.uuid }}" class="btn btn-warning">
+                        <i class="icon-edit icon-white"></i>
+                        </a>
+     
+                        <a href="/deletedork?dork={{ dork.uuid }}" class="btn btn-danger">
+                        <i class="icon-remove icon-white"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                {% end %}
+            {% end %}
+        {% except %}
+
+        {% end %}
+    </table>
+{% end %}

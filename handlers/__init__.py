@@ -60,6 +60,14 @@ app = Application([
                   # Admin Handlers - for admin only pages
                   (r'/manageusers', ManageUsersHandler, {
                       'dbsession':dbsession}),
+                  (r'/managedorks', ManageDorksHandler, {
+                      'dbsession':dbsession}),
+                  (r'/managetags', ManageTagsHandler, {
+                      'dbsession':dbsession}),
+                  (r'/deletetag', DeleteTagsHandler, {
+                      'dbsession':dbsession}),
+                  (r'/deletedork', DeleteDorksHandler, {
+                      'dbsession':dbsession}),
 
                   # User handlers - for logged in pages
                   (r'/settings', SettingsHandler, {'dbsession' : dbsession}),

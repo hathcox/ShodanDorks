@@ -32,6 +32,9 @@
                 <span>Category: </span>
                 <select>
                     <option>All</option>
+                    {% for tag in tags %}
+                        <option>{{ tag.name }}</option>
+                    {% end %}
                 </select>
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 <span>Search:</span>
@@ -40,10 +43,11 @@
         </center>
 
         <hr>
-        <h2>Latest Entries:</h2>
+        <h2>{{ title }}</h2>
         <table class="table table-striped">
             <tr>
                 <th>Date</th>
+                <th>Author</th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Link</th>
@@ -52,9 +56,10 @@
                 {% for dork in dorks %}
                 <tr>
                     <td>{{ dork.submited_date }}</td>
+                    <td>{{ dork.author }}</td>
                     <td>{{ dork.title }}</td>
                     <td>{{ dork.description }}</td>
-                    <td><a href="#"><i class="icon-screenshot icon-white" ></i></a></td>
+                    <td><a href="http://www.shodanhq.com/search?q={{ dork.query }}" class="btn" target="_blank"><i class="icon-screenshot icon-white" ></i></a></td>
                 </tr>
 
                 {% end %}

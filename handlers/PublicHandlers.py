@@ -39,12 +39,14 @@ class WelcomeHandler(RequestHandler):
     def get(self, *args, **kwargs):
         ''' Renders the welcome page '''
         top_dorks = Dork.get_top()
-        self.render("public/welcome.html", dorks=top_dorks, errors=None)
+        tags = Tag.all()
+        self.render("public/welcome.html", tags=tags, dorks=top_dorks, errors=None, title="Latest Entries:")
 
     def post(self, *args, **kwargs):
         ''' This will search for a specific dork '''
         # top_dorks = Dork.get_top()
         form = Form(search="Please enter a search")
+        tags = Tag.all()
         try:
             #Check to see if they selected  a tag
             tag_name = self.get_argument('tag')
@@ -52,16 +54,18 @@ class WelcomeHandler(RequestHandler):
         except:
             tag = None
         if form.validate(self.request.arguments):
+            title = "Results:"
             if tag == None:
                 #Search for all dorks
                 top_dorks = Dork.search_all(self.get_argument('search'))
-                self.render("public/welcome.html", dorks=top_dorks, errors=None)
+                self.render("public/welcome.html",  tags=tags, dorks=top_dorks, errors=None, title=title)
             else:
                 #Search for dorks with only that tag
                 top_dorks = Dork.search_by_tag(tag, self.get_argument('search'))
-                self.render("public/welcome.html", dorks=top_dorks, errors=None)
+                self.render("public/welcome.html",  tags=tags, dorks=top_dorks, errors=None, title=title)
         else:
-            self.render("public/welcome.html", dorks=top_dorks, errors=['Please enter a Search'])
+            top_dorks = Dork.all()
+            self.render("public/welcome.html",  tags=tags, dorks=top_dorks, errors=['Please enter a Search'], title="Latest Entries:")
 
 
 class LoginHandler(RequestHandler):
@@ -232,34 +236,61 @@ class SubmitHandler(RequestHandler):
                 self.get_secure_cookie('auth'), self.request.remote_ip)
             user = User.by_user_name(session.data['user_name'])
             if user != None:
-                self.render('user/submit.html', errors=None, success=None)
+                tags = Tag.all()
+                self.render('user/submit.html', user=user, errors=None, success=None, tags=tags)
             else:
                 self.render('public/please_login.html')
-        except Exception as e:
-            logging.info(e)
+        except:
             self.render('public/please_login.html')
 
     def post(self, *args, **kwargs):
         ''' Create the Dork in the system '''
         form = Form(
             title="Please enter a title",
-            description="Please enter a Description"
+            description="Please enter a Description",
+            author="Please Enter an Author",
+            query="Please Enter the Shodan Hq Search Query",
+            tag="Please Select a Category"
         )
+        try:
+            #Getting the user
+            session_manager = SessionManager.Instance()
+            session = session_manager.get_session(
+                self.get_secure_cookie('auth'), self.request.remote_ip)
+            user = User.by_user_name(session.data['user_name'])
 
-        if form.validate(self.request.arguments):
-            old_dork = Dork.by_title(self.get_argument('title'))
-            if old_dork:
-                self.render('user/submit.html', errors=['A Dork by this title has already been submitted'], success=None)
+            #Get the tag
+            old_tag = Tag.by_name(self.get_argument('tag'))
+
+            #Get all the tags
+            tags = Tag.all()
+
+            if user != None:
+                if form.validate(self.request.arguments):
+                    old_dork = Dork.by_title(self.get_argument('title'))
+                    if old_dork:
+                        self.render('user/submit.html', user=user, errors=['A Dork by this title has already been submitted'], success=None, tags=tags)
+                    elif old_tag == None:
+                        self.render('user/submit.html', user=user, errors=['A Dork by this title has already been submitted'], success=None, tags=tags)
+                    else:
+                        self.create_dork(user)
+                        self.render('user/submit.html', user=user, success='Successfully created new Dork', errors=None, tags=tags)
+                else:
+                    self.render('user/submit.html', user=user, errors=form.errors, success=None, tags=tags)
             else:
-                self.create_dork()
-                self.render('user/submit.html', success='Successfully created new Dork', errors=None)
-        else:
-            self.render('user/submit.html', errors=form.errors, success=None)
+                self.render('public/please_login.html')
+        except Exception as e:
+            print e
+            self.render('public/please_login.html')
 
-    def create_dork(self):
+
+    def create_dork(self, user):
         new_dork = Dork(
             title = self.get_argument('title'),
-            description = self.get_argument('description')
+            description = self.get_argument('description'),
+            query = self.get_argument('query'),
+            author = self.get_argument('author'),
+            submitted_user_id = user.id
             )
         dbsession.add(new_dork)
         dbsession.flush()
@@ -269,7 +300,8 @@ class TopHandler(RequestHandler):
 
     def get(self, *args, **kwargs):
         top_dorks = Dork.get_top()
-        self.render('public/top_dorks.html', dorks=top_dorks)
+        tags = Tag.all()
+        self.render('public/top_dorks.html', tags=tags, dorks=top_dorks)
 
     def post(self, *args, **kwargs):
         pass

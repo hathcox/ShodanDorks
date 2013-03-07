@@ -1,0 +1,90 @@
+{% extends "../main.html" %}
+
+{% block title %}Manage Tags{% end %}
+
+{% block content %}
+	<h2>Manage Tags</h2>
+	<p>This page is used to delete and edit existing tags</p>
+
+    {% try %}
+        {% if errors != None and len(errors) != 0 %}
+            {% for error in erros %}
+                <div class="alert alert-error">
+                  <a class="close" data-dismiss="alert" href="#">×</a>
+                  <h4 class="alert-heading">ERROR</h4>
+                  {{ error }}
+                </div>
+            {% end %}
+        {% end %}
+    {% except %}
+    {% end %}
+
+
+    {% try %}
+        {% if success != None and len(success) != 0 %}
+            <div class="alert alert-success">
+              <a class="close" data-dismiss="alert" href="#">×</a>
+              <h4 class="alert-heading">SUCCESS</h4>
+              {{ success }}
+            </div>
+        {% end %}
+    {% except %}
+    {% end %}
+
+
+	<table class="table table-striped">
+        <tr>
+            <th>Date</th>
+            <th>Tag</th>
+            <th>Actions</th>
+        </tr>
+        {% try %}
+            {% if tags != None and len(tags) != 0 %}
+                {% for tag in tags %}
+                <tr>
+                    <td>{{ tag.created }}</td>
+                    <td>{{ tag.name }}</td>
+                    <td>
+                        <a href="/deletetag?tag={{ tag.uuid }}" class="btn btn-danger">
+                        <i class="icon-remove icon-white"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                {% end %}
+            {% end %}
+        {% except %}
+
+        {% end %}
+    </table>
+
+    <a href="#myModal" role="button" class="btn" data-toggle="modal" >Create Tag</a>
+
+    <!-- Create Tag Modal -->
+
+    <div id="myModal" class="modal hide fade">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Tag Information</h3>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" action="/managetags" method="POST" >
+            {% raw xsrf_form_html() %}
+
+          <div class="control-group">
+            <label class="control-label" for="name">Name</label>
+            <div class="controls">
+              <input type="text" name="name" placeholder="Please enter a Tag Name">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <div class="control-group">
+            <div class="controls">
+              <button type="submit" class="btn">Submit Tag</button>
+            </div>
+          </div>
+      </div>
+    </form>
+    </div>
+{% end %}
